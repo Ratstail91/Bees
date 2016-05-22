@@ -7,7 +7,7 @@ LIBS+=
 ifeq ($(OS),Windows_NT)
 	LIBS+=-lmingw32
 endif
-LIBS+=-lSDL2main -lSDL2
+LIBS+=-lSDL2main -lSDL2 -lSDL2_image
 
 #flags
 CXXFLAGS+=-std=c++11 $(addprefix -I,$(INCLUDES))

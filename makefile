@@ -5,12 +5,19 @@
 #RM=del /S
 
 OUTDIR=out
+BINDIR=bin
 
-all: $(OUTDIR)
+all: $(OUTDIR) binary
 	$(MAKE) -C src
 
 debug: export CXXFLAGS+=-g
 debug: clean all
+
+#For use on my machine ONLY
+binary: $(OUTDIR)
+ifeq ($(OS),Windows_NT)
+	xcopy /Y $(BINDIR)\\*.dll $(OUTDIR)
+endif
 
 $(OUTDIR):
 	mkdir $(OUTDIR)

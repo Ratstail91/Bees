@@ -1,4 +1,4 @@
-/* Copyright: (c) Kayne Ruse 2015
+/* Copyright: (c) Kayne Ruse 2013-2016
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty. In no event will the authors be held liable for any damages
@@ -21,31 +21,26 @@
 */
 #pragma once
 
-#include "base_scene.hpp"
+#include "image.hpp"
+#include "singleton.hpp"
 
-#include "texture_loader.hpp"
+#include <functional>
+#include <map>
 
-class ExampleScene : public BaseScene {
+class TextureLoader : public Singleton<TextureLoader> {
 public:
-	ExampleScene();
-	~ExampleScene();
+	SDL_Texture* Load(SDL_Renderer*, std::string dirname, std::string fname);
+	SDL_Texture* Find(std::string fname);
+	void Unload(std::string fname);
+	void UnloadAll();
+	void UnloadIf(std::function<bool(std::pair<const std::string, Image const&>)> fn);
 
-	void RenderFrame(SDL_Renderer* renderer) override;
+	int Size();
 
 private:
-	//frame phases
-	void FrameStart() override;
-	void Update() override;
-	void FrameEnd() override;
+	friend Singleton<TextureLoader>;
+	TextureLoader();
+	~TextureLoader();
 
-	//input events
-	void MouseMotion(SDL_MouseMotionEvent const& event) override;
-	void MouseButtonDown(SDL_MouseButtonEvent const& event) override;
-	void MouseButtonUp(SDL_MouseButtonEvent const& event) override;
-	void MouseWheel(SDL_MouseWheelEvent const& event) override;
-	void KeyDown(SDL_KeyboardEvent const& event) override;
-	void KeyUp(SDL_KeyboardEvent const& event) override;
-
-	//singletons
-	TextureLoader& textureLoader = TextureLoader::GetSingleton();
+	std::map<std::string, Image> elementMap;
 };

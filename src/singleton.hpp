@@ -1,4 +1,4 @@
-/* Copyright: (c) Kayne Ruse 2015
+/* Copyright: (c) Kayne Ruse 2013-2016
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty. In no event will the authors be held liable for any damages
@@ -21,31 +21,40 @@
 */
 #pragma once
 
-#include "base_scene.hpp"
+#include <stdexcept>
 
-#include "texture_loader.hpp"
-
-class ExampleScene : public BaseScene {
+template<typename T>
+class Singleton {
 public:
-	ExampleScene();
-	~ExampleScene();
+	static T& GetSingleton() {
+		if (!ptr) {
+			throw(std::logic_error("This singleton has not been created"));
+		}
+		return *ptr;
+	}
+	static void CreateSingleton() {
+		if (ptr) {
+			throw(std::logic_error("This singleton has already been created"));
+		}
+		ptr = new T();
+	}
+	static void DeleteSingleton() {
+		if (!ptr) {
+			throw(std::logic_error("A non-existant singleton cannot be deleted"));
+		}
+		delete ptr;
+		ptr = nullptr;
+	}
 
-	void RenderFrame(SDL_Renderer* renderer) override;
+protected:
+	Singleton() = default;
+	Singleton(Singleton const&) = default;
+	Singleton(Singleton&&) = default;
+	~Singleton() = default;
 
 private:
-	//frame phases
-	void FrameStart() override;
-	void Update() override;
-	void FrameEnd() override;
-
-	//input events
-	void MouseMotion(SDL_MouseMotionEvent const& event) override;
-	void MouseButtonDown(SDL_MouseButtonEvent const& event) override;
-	void MouseButtonUp(SDL_MouseButtonEvent const& event) override;
-	void MouseWheel(SDL_MouseWheelEvent const& event) override;
-	void KeyDown(SDL_KeyboardEvent const& event) override;
-	void KeyUp(SDL_KeyboardEvent const& event) override;
-
-	//singletons
-	TextureLoader& textureLoader = TextureLoader::GetSingleton();
+	static T* ptr;
 };
+
+template<typename T>
+T* Singleton<T>::ptr = nullptr;

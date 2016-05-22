@@ -22,7 +22,13 @@
 #include "example_scene.hpp"
 
 ExampleScene::ExampleScene() {
-	//
+	//load the textures
+	textureLoader.Load(GetRenderer(), "rsc/", "bee-queen.png");
+	textureLoader.Load(GetRenderer(), "rsc/", "bee-worker.png");
+	textureLoader.Load(GetRenderer(), "rsc/", "comb-brood.png");
+	textureLoader.Load(GetRenderer(), "rsc/", "comb-capped.png");
+	textureLoader.Load(GetRenderer(), "rsc/", "comb-empty.png");
+	textureLoader.Load(GetRenderer(), "rsc/", "comb-honey.png");
 }
 
 ExampleScene::~ExampleScene() {
