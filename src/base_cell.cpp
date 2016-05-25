@@ -19,24 +19,12 @@
  * 3. This notice may not be removed or altered from any source
  * distribution.
 */
-#pragma once
+#include "base_cell.hpp"
 
-class BaseCell {
-public:
-	enum State {
-		BLANK,
-		EMPTY,
-		HONEY,
-		CAPPED,
-		BROOD
-	};
+BaseCell::State BaseCell::SetState(State s) {
+	return state = s;
+}
 
-	BaseCell() = default;
-	virtual ~BaseCell() = default;
-
-	State SetState(State s);
-	State GetState();
-
-private:
-	State state = State::EMPTY;
-};
+BaseCell::State BaseCell::GetState() {
+	return state;
+}

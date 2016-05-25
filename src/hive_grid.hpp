@@ -30,7 +30,7 @@ public:
 	HiveGrid();
 	~HiveGrid();
 
-	void DrawTo(SDL_Renderer* const, int camX, int camY);
+	void DrawTo(SDL_Renderer* const, int camX, int camY, double zoom);
 
 	void Init(int xCount, int yCount);
 	void Quit();

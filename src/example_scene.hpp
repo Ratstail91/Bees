@@ -23,6 +23,7 @@
 
 #include "base_scene.hpp"
 
+#include "hive_grid.hpp"
 #include "texture_loader.hpp"
 
 class ExampleScene : public BaseScene {
@@ -48,4 +49,12 @@ private:
 
 	//singletons
 	TextureLoader& textureLoader = TextureLoader::GetSingleton();
+
+	//camera
+	struct Camera {
+		int x = 0, y = 0;
+		double zoom = 1.0;
+	}camera;
+
+	HiveGrid hiveGrid;
 };

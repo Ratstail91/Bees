@@ -29,10 +29,12 @@ ExampleScene::ExampleScene() {
 	textureLoader.Load(GetRenderer(), "rsc/", "comb-capped.png");
 	textureLoader.Load(GetRenderer(), "rsc/", "comb-empty.png");
 	textureLoader.Load(GetRenderer(), "rsc/", "comb-honey.png");
+
+	hiveGrid.Init(100, 100);
 }
 
 ExampleScene::~ExampleScene() {
-	//
+	hiveGrid.Quit();
 }
 
 //-------------------------
@@ -52,7 +54,7 @@ void ExampleScene::FrameEnd() {
 }
 
 void ExampleScene::RenderFrame(SDL_Renderer* renderer) {
-	//
+	hiveGrid.DrawTo(renderer, camera.x, camera.y, camera.zoom);
 }
 
 //-------------------------
@@ -60,7 +62,10 @@ void ExampleScene::RenderFrame(SDL_Renderer* renderer) {
 //-------------------------
 
 void ExampleScene::MouseMotion(SDL_MouseMotionEvent const& event) {
-	//
+	if (event.state & SDL_BUTTON_RMASK) {
+		camera.x += event.xrel / camera.zoom;
+		camera.y += event.yrel / camera.zoom;
+	}
 }
 
 void ExampleScene::MouseButtonDown(SDL_MouseButtonEvent const& event) {
@@ -72,7 +77,18 @@ void ExampleScene::MouseButtonUp(SDL_MouseButtonEvent const& event) {
 }
 
 void ExampleScene::MouseWheel(SDL_MouseWheelEvent const& event) {
-	//
+	if (event.y < 0) {
+		camera.zoom /= 1.1;
+		if (camera.zoom <= 0.5) {
+			camera.zoom = 0.5;
+		}
+	}
+	if (event.y > 0) {
+		camera.zoom *= 1.1;
+		if (camera.zoom >= 3.5) {
+			camera.zoom = 3.5;
+		}
+	}
 }
 
 void ExampleScene::KeyDown(SDL_KeyboardEvent const& event) {

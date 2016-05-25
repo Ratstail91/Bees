@@ -21,6 +21,8 @@
 */
 #include "hive_grid.hpp"
 
+#include "texture_loader.hpp"
+
 #include <stdexcept>
 
 HiveGrid::HiveGrid() {
@@ -31,16 +33,46 @@ HiveGrid::~HiveGrid() {
 	Quit();
 }
 
-void HiveGrid::DrawTo(SDL_Renderer* const renderer, int camX, int camY) {
+void HiveGrid::DrawTo(SDL_Renderer* const renderer, int camX, int camY, double zoom) {
+	Image utilImage;
+	TextureLoader& textureLoader = TextureLoader::GetSingleton();
+
 	for (int j = 0; j < yCount; j++) {
 		for (int i = 0; i < xCount; i++) {
-//			cellArray[i][j]->DrawTo(renderer, camX, camY);
+			//get the correct texture data
+			SDL_Texture* cellTexture = [&]() -> SDL_Texture* const {
+				switch(cellArray[i][j].GetState()) {
+					case BaseCell::State::BLANK: return nullptr;
+					case BaseCell::State::EMPTY: return textureLoader.Find("comb-empty.png");
+					case BaseCell::State::HONEY: return textureLoader.Find("comb-honey.png");
+					case BaseCell::State::CAPPED: return textureLoader.Find("comb-capped.png");
+					case BaseCell::State::BROOD: return textureLoader.Find("comb-brood.png");
+				};
+			}();
+
+			if (cellTexture == nullptr) {
+				continue;
+			}
+			else {
+				utilImage.SetTexture(cellTexture);
+			}
+
+			//draw to the correct location
+			int destX = i * 12;
+			int destY = (j/2) * 18;
+
+			if (j % 2 == 1) {
+				destX += 6;
+				destY += 9;
+			}
+
+			utilImage.DrawTo(renderer, (camX + destX) * zoom, (camY + destY) * zoom, zoom, zoom);
 		}
 	}
 }
 
 void HiveGrid::Init(int x, int y) {
-	if (!cellArray) {
+	if (cellArray != nullptr) {
 		throw(std::runtime_error("Cannot initialize a full hive grid"));
 	}
 	xCount = x;
@@ -64,6 +96,9 @@ void HiveGrid::Quit() {
 BaseCell* HiveGrid::GetCell(int x, int y) {
 	if (cellArray == nullptr) {
 		throw(std::runtime_error("Cannot access an empty hive grid"));
+	}
+	if (x < 0 || y < 0 || x >= xCount || y >= yCount) {
+		throw(std::out_of_range("HiveGrid::GetCell arguments out of range"));
 	}
 
 	return &cellArray[x][y];
